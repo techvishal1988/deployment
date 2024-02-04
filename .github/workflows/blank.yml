@@ -1,6 +1,5 @@
-name: CD
+name: CD-api
 on:
-  workflow_dispatch:
   repository_dispatch:
       inputs:
       env_name:
