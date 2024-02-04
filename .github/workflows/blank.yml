@@ -5,15 +5,6 @@ on:
 
   repository_dispatch:
     inputs:
-      image_name:
-        required: true
-      image_tag:
-        required: true
-      app_repo:
-        required: true
-      env_name:
-        required: true
-
 
 jobs:
   build:
@@ -23,27 +14,21 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
-    - name: Updating Deployment file
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+    - name: Update Lambda Function Configuration
       run: |
-        IMAGE_ID=${{ github.event.client_payload.image_name }}
-        echo $IMAGE_ID
-        IMAGE_TAG=${{ github.event.client_payload.image_tag }}
-        echo $IMAGE_TAG
-        APP_REPO=${{ github.event.client_payload.app_repo }}
-        echo $APP_REPO
-        image=${{ github.event.client_payload.image }}
-        ENV_NAME=${{ github.event.client_payload.env_name }}
-        echo $ENV_NAME
-        pwd
-        ls
-        cd /home/runner/work/DotNetEFCoreWithSQS-CD/DotNetEFCoreWithSQS-CD/GitOps/ArgoCD/environments/$ENV_NAME/apps/$APP_REPO/
-        kustomize edit set image $IMAGE_ID:$IMAGE_TAG
-    - name: Commiting deployment file changes
-    
-      run: |
-        git config --global user.email "dev@demo.com"
-        git config --global user.name "demodev"
-        git add .
-        git commit -m "Update ${{ github.event.client_payload.ENV_NAME }} ${{ github.event.client_payload.APP_NAME }} to new version"
-        git push   
+           ls
+           pwd
+           aws lambda update-function-configuration \
+            --function-name lambda-dev \
+            --handler Geography.Serverless::Geography.Serverless.LambdaEntryPoint::FunctionHandlerAsync
+      
+           aws lambda update-function-code \
+           --function-name lambda-dev \
+           --s3-bucket hackathondotnet1 \
+           --s3-key geography.zip
