@@ -1,10 +1,6 @@
 name: CD
-# Controls when the workflow will run
-# workflow_dispatch:
 on:
-
   repository_dispatch:
-
 jobs:
   build:
     name: Build and Pushing the Image
