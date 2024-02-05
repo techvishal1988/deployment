@@ -2,8 +2,8 @@ name: CD-api
 on:
   repository_dispatch:
       inputs:
-      env_name:
-        required: true
+        env_name:
+          required: true
 jobs:
   build:
     name: Build and Pushing the Image
