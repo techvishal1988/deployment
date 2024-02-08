@@ -1,4 +1,4 @@
-name: dev
+name: dev-deploy
 on:
   repository_dispatch:
 jobs:
