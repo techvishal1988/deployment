@@ -1,8 +1,10 @@
-name: CD-api
+name: CD
 on:
   repository_dispatch:
       inputs:
         env_name:
+          required: true
+        image_name:
           required: true
 jobs:
   build:
@@ -20,13 +22,16 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
     - name: Update Lambda Function Configuration
       run: |
-           ls
-           pwd
-           aws lambda update-function-configuration \
-            --function-name lambda-dev \
-            --handler Geography.Serverless::Geography.Serverless.LambdaEntryPoint::FunctionHandlerAsync
+              IMAGE_ID=${{ github.event.client_payload.image_name }}
+              ENV_NAME=${{ github.event.client_payload.env_name }}
+
+              ls
+              pwd
+              aws lambda update-function-configuration \
+              --function-name lambda-dev \
+              --handler Geography.Serverless::Geography.Serverless.LambdaEntryPoint::FunctionHandlerAsync
       
-           aws lambda update-function-code \
-           --function-name lambda-dev \
-           --s3-bucket hackathondotnet1 \
-           --s3-key geography.zip
+              aws lambda update-function-code \
+              --function-name lambda-dev \
+              --s3-bucket hackathondotnet1 \
+              --s3-key geography.zip
