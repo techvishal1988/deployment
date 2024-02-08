@@ -1,8 +1,8 @@
-name: CD
+name: dev
 on:
   repository_dispatch:
 jobs:
-  build:
+  dev-deploy:
     name: Build and Pushing the Image
     runs-on: ubuntu-latest
 
