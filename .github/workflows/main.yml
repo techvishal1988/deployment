@@ -1,4 +1,4 @@
-name: dev-deploy
+name: deployment
 on:
   repository_dispatch:
     inputs:
