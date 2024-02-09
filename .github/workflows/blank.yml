@@ -1,6 +1,9 @@
 name: dev-deploy
 on:
   repository_dispatch:
+    inputs:
+      env_name:
+        required: true
 jobs:
   dev-deploy:
     name: Build and Pushing the Image
@@ -18,12 +21,13 @@ jobs:
     - name: Update Lambda Function Configuration
       run: |
               ls
+              ENV_NAME=${{ github.event.client_payload.env_name }}
               pwd
               aws lambda update-function-configuration \
-              --function-name lambda-dev \
+              --function-name $ENV_NAME \
               --handler Geography.Serverless::Geography.Serverless.LambdaEntryPoint::FunctionHandlerAsync
       
               aws lambda update-function-code \
-              --function-name lambda-dev \
+              --function-name $ENV_NAME \
               --s3-bucket hackathondotnet1 \
               --s3-key geography.zip
